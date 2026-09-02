@@ -43,6 +43,14 @@ After packaging and documentation:
   checkout cleanup, `CODEX_HOME`, and missing post-copy verification.
 - Hermes converged on the documented GitHub-source and tap identifiers. Review
   found and closed a potential downloader ambiguity by linking the CLI entrypoint
-  and every imported runtime module directly from `SKILL.md`.
+  and every imported runtime module directly from `SKILL.md`. A live private-repo
+  install then exposed credential-shaped test canaries to Hermes' regex scanner;
+  `.skillignore` now excludes only `tests/`, while all runtime files remain in
+  scope. The resulting community-source verdict is `safe`, and native install
+  completed without `--force`.
 - The final independent rechecks reported no remaining blocking or important
   installation defects for Codex, Claude, or Hermes.
+
+Live URL tests also confirmed that `npx skills add` cloned the private repository
+and installed the complete package for both Codex and Claude Code, while Hermes
+installed 24 packaged files and recorded a safe-verdict audit entry.
