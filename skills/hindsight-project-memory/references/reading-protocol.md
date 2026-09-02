@@ -13,6 +13,17 @@ Use this order:
 8. Answer with cited paths/IDs, current-versus-historical state and explicit uncertainty.
 9. If verification disproves memory, propose a correction only after the live check. Writing follows the separate mutation recipe and confirmation gate.
 
+## Permission and policy answer contract
+
+For questions about roles, grants, access, authorization, policy, or expected-versus-implemented behavior, organize material claims into these evidence slots:
+
+1. **Requirement or policy:** use only the current normative sources. Conditions found only in implementation evidence stay outside this slot.
+2. **Retained runtime snapshot:** report observed implementation behavior with its source date, branch/commit or other freshness marker. A historical or stale snapshot remains historical even when it is more detailed than the requirement.
+3. **Live runtime verification:** verify the current implementation when accessible. Otherwise mark this slot unavailable and describe the answer as functional guidance rather than runtime certification.
+4. **Composite result:** within each evidence layer, enumerate the independent role, relationship and identity contributions with their action-specific scope and conditions, then show their union. A condition attached to one action or contribution does not transfer to another.
+
+A concise summary still assigns every material permission claim to exactly one evidence slot. When retained sources conflict, state the conflict instead of blending them into a single rule. Cite the source ID/path and include available hash, timestamp or commit metadata needed to judge freshness.
+
 Knowledge Pages use the project's controlled `knowledge:*` vocabulary. An empty page is a query/tag/configuration symptom to inspect, not evidence that the bank contains no relevant facts.
 
 Credential-bearing retained sources follow the same evidence rules. Use their values only when the project policy permits them and the task requires them; never reproduce them in audit, command summaries or transport diagnostics.
