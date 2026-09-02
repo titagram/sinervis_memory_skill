@@ -1,0 +1,2 @@
+# Development-only fixtures include credential-shaped canaries used to test staging safeguards.
+tests/

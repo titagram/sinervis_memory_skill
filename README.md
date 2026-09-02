@@ -124,7 +124,9 @@ GITHUB_TOKEN="$(gh auth token --hostname github.com)" \
 
 Hermes uses the GitHub API for private sources, so a computer authenticated only
 through Git's credential helper may still need `GITHUB_TOKEN` exported from its
-existing credential manager. Never commit that value.
+existing credential manager. Never commit that value. The package's
+`.skillignore` excludes only development tests from Hermes' install-time scan;
+the executable helpers and all user-facing instructions remain scanned.
 
 ## Generic Agent Skills fallback
 

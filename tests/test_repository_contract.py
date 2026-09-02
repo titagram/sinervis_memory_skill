@@ -102,6 +102,16 @@ class RepositoryContractTest(unittest.TestCase):
         ]
         self.assertEqual([], custom_installers)
 
+    def test_hermes_scanner_excludes_only_development_tests(self):
+        ignore_path = SKILL_ROOT / ".skillignore"
+        self.assertTrue(ignore_path.is_file())
+        patterns = [
+            line.strip()
+            for line in ignore_path.read_text(encoding="utf-8").splitlines()
+            if line.strip() and not line.lstrip().startswith("#")
+        ]
+        self.assertEqual(["tests/"], patterns)
+
 
 if __name__ == "__main__":
     unittest.main()
