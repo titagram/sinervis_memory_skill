@@ -1,0 +1,25 @@
+# Writing protocol
+
+Use this order:
+
+1. Resolve the active operator, registered project root and exact bank.
+2. Classify each candidate as source, dated event, audited graph projection or source-backed dossier.
+3. Run manifest/path/symlink/binary/data preflight and the profile's `credential_policy`. Missing policy means `exclude`. `allow_project_staging` requires `reviewed: true` and leaves credential-bearing bytes unchanged only when the candidate's canonical relative POSIX path is listed exactly in `source_policy.credential_sources`; every other candidate uses `exclude`. It does not expand discovery or other source permissions.
+4. Preserve useful source detail. A dossier may synthesize; a source record is not replaced by an agent summary.
+5. Assign context, real event time or `unset`, stable document ID, tags, string metadata, provenance hashes and `observation_scopes: "shared"` at the retain-item level. Rely on Hindsight's native same-`document_id` replace/upsert and shared-observation consolidation rather than building a second deduplication layer. The source/event manifest and audited graph/dossier derived batch are separate inputs; do not encode a graph capsule or dossier as a source/event manifest entry.
+6. Show the mutation summary: operator, project, bank, action, IDs/count/bytes/layers and whether credential-bearing records are included. Never print their values.
+7. Obtain explicit confirmation bound to that exact summary. Deletion, bank/project remapping and full export always need their own explicit approval.
+8. Retain the confirmed batch without recall or reflect in the same request. Reuse its deterministic operation ID. Build into a run-local candidate manifest and promote it to the canonical last-successful checkpoint only after the approved export reaches its verified success boundary; a dry run or interrupted export never replaces that checkpoint.
+9. Poll until `completed`, `failed` or `cancelled`; a timeout or uncertain acknowledgement is not success and is inspected before retry. If the original operation ID is missing, recover it or use operation/document state to prove a bounded terminal outcome before retrying; when ambiguity remains, stop because a new confirmation does not make a resubmission idempotent.
+10. Append content-free intended, acknowledged and terminal audit records for asynchronous work. Keep bearer tokens, retained/page bodies and credential-shaped server echoes out of audit and diagnostics.
+11. Consolidate only at the successful batch boundary. Bind its approved target to the action, bank, exact registered-profile hash and validated manifest hash; poll the returned server operation ID to terminal and never report an acknowledgement as completion. Preserve successful work when a batch is partial. Inspect terminal failures before a separately confirmed recovery; a timeout or uncertain acknowledgement is never resubmitted until operation/document state proves the original outcome.
+12. Bind Knowledge Page creation to the canonical ordered page specs (`name`, `source_query`, optional `parent_id`, `tags`, `max_tokens`, `trigger`) plus action/bank/profile/manifest hashes. For a same-name existing page, use Hindsight's page and backing mental-model reads to verify the reviewed fields and retrieve a non-empty body; configuration drift is non-success and is not repaired by creating a duplicate. Bind refresh to the exact page ID and mental-model ID as well. After confirmation, audit intent, submit once, audit acknowledgement, poll the server operation ID with a deadline, audit the terminal state, then retrieve the resulting page through the explicit page-read interface and inspect its body for unsupported synthesis. Timeout, cancellation, failed build or missing body is non-success and never authorizes an automatic resubmission.
+13. Run the benchmark before readiness.
+
+Registry/profile state may store the credential policy name and the selected source paths, never credential values. Audits remain content-free. Tags are identifiers, never a payload channel. `allow_project_staging` does not authorize out-of-root paths, symlink escapes, binaries, dumps, uploads, customer/payroll/medical data, dependency/build caches or global Hindsight configuration.
+
+## Conflict, supersession and correction
+
+Supersession keeps chronology. Example: retain the event `2026-08-15T10:00+02:00 — Use one bank per repository`. Add the later event `2026-09-01T14:30+02:00 — Acme Portal webapp and mobile share acme::portal because they are one product`, link it as superseding the older event, and label the later decision `current`. Do not delete or rewrite the older event.
+
+A correction is separate from supersession. Example: an imported assertion says `employee_export` is `GET`; live `debug:router` on `2026-09-01T16:00+02:00` proves it is `POST`. Keep the imported record as historical evidence, add a verified correction with the router source/hash and observation time, mark the imported assertion `disproved`, and label `POST` as current. The correction is written only through the confirmed recipe above.

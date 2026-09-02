@@ -1,0 +1,4 @@
+interface:
+  display_name: "Hindsight Project Memory"
+  short_description: "Shared, attributable project knowledge"
+  default_prompt: "Use $hindsight-project-memory to inspect this project's memory status without writing."

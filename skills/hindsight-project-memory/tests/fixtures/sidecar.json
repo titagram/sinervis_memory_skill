@@ -1,0 +1,25 @@
+{
+  "metadata": {
+    "generated_at": "2026-09-01T10:00:00+02:00",
+    "workspace": "/work/portal",
+    "source": "deterministic-portal-sidecar"
+  },
+  "nodes": [
+    {"id": "wiki:wiki/01-people.md", "type": "wiki", "label": "People", "path": "wiki/01-people.md"},
+    {"id": "route:employee_list", "type": "route", "label": "employee_list", "path": "/employees"},
+    {"id": "file:portal/src/Controller/EmployeeController.php", "type": "file", "label": "EmployeeController.php", "path": "portal/src/Controller/EmployeeController.php"},
+    {"id": "file:portal/src/Resources/config/employee.yaml", "type": "file", "label": "employee.yaml", "path": "portal/src/Resources/config/employee.yaml"},
+    {"id": "entity:Worker", "type": "entity", "label": "Worker", "path": "portal/src/Entity/Worker.php"},
+    {"id": "file:portal/src/EventListener/WorkerListener.php", "type": "file", "label": "WorkerListener.php", "path": "portal/src/EventListener/WorkerListener.php"},
+    {"id": "service:worker-sync", "type": "service", "label": "worker-sync"}
+  ],
+  "edges": [
+    {"source": "wiki:wiki/01-people.md", "target": "file:portal/src/Controller/EmployeeController.php", "type": "references", "evidence": "`src/Controller/EmployeeController.php`", "confidence": "extracted"},
+    {"source": "route:employee_list", "target": "file:portal/src/Controller/EmployeeController.php", "type": "handled_by", "evidence": "EmployeeController::list", "confidence": "extracted"},
+    {"source": "route:employee_list", "target": "entity:Worker", "type": "uses_entity", "evidence": "Worker query", "confidence": "inferred"},
+    {"source": "route:employee_list", "target": "file:portal/src/Resources/config/employee.yaml", "type": "declares_policy", "evidence": "employee list policy", "confidence": "inferred"},
+    {"source": "file:portal/src/Controller/EmployeeController.php", "target": "file:portal/src/Resources/config/employee.yaml", "type": "configured_by", "evidence": "employee.yaml", "confidence": "inferred"},
+    {"source": "entity:Worker", "target": "file:portal/src/EventListener/WorkerListener.php", "type": "entity_listener", "evidence": "@ORM\\EntityListeners", "confidence": "extracted"},
+    {"source": "service:worker-sync", "target": "entity:Worker", "type": "synchronizes", "evidence": "worker synchronization", "confidence": "inferred", "extra": "benign-future-metadata"}
+  ]
+}
