@@ -45,7 +45,6 @@ class RepositoryContractTest(unittest.TestCase):
     def test_package_contains_no_machine_or_carnovali_specific_material(self):
         forbidden = (
             "/Users/gabriele",
-            ".hindsight/codex.json",
             "sinervis-carnovali",
             "Carnovali",
         )
@@ -58,6 +57,14 @@ class RepositoryContractTest(unittest.TestCase):
                 if marker in text:
                     failures.append(f"{path.relative_to(SKILL_ROOT)} contains {marker!r}")
         self.assertEqual([], failures)
+
+    def test_skill_declares_the_team_endpoint_and_machine_local_config(self):
+        skill_text = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
+        readme = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
+        for text in (skill_text, readme):
+            self.assertIn("https://hindsight.persephone.cc", text)
+            self.assertIn("~/.hindsight/codex.json", text)
+        self.assertIn("Do not probe", skill_text)
 
     def test_package_contains_no_generated_cache(self):
         generated = [

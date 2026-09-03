@@ -8,8 +8,9 @@ dossiers.
 
 The installable skill is
 [`skills/hindsight-project-memory/SKILL.md`](skills/hindsight-project-memory/SKILL.md).
-The repository contains no Hindsight endpoint, token, operator profile, project
-registration, bank content, or retained credentials.
+The repository declares the Sinervis team's canonical Hindsight endpoint but
+contains no token, operator profile, project registration, bank content, or
+retained credentials.
 
 ## If an agent receives only this URL
 
@@ -147,9 +148,14 @@ project-memory state. New products receive a separate proposed Hindsight bank;
 additional repositories share a bank only after their relationship to the same
 product is explicitly confirmed.
 
-Hindsight connection data remains machine-local. Pass the local configuration
-path required by the skill's commands or adapt it to the runtime integration;
-never add configuration containing tokens to this repository.
+The canonical shared server is `https://hindsight.persephone.cc`. Credentials
+remain machine-local in `~/.hindsight/codex.json`; Claude, Hermes, and other
+agents may reuse that file even though its name originated with the Codex
+integration. An explicitly supplied equivalent configuration is acceptable only
+when it points to the same canonical origin. The skill must not probe or fall
+back to localhost, embedded Hindsight, cloud Hindsight, alternate profiles, or
+similarly named banks. New projects receive new banks on the same server.
+Never add configuration containing tokens to this repository.
 
 ## Validation
 

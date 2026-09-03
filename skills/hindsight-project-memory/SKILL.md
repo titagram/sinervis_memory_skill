@@ -9,6 +9,7 @@ Use shared Hindsight knowledge only within the confirmed project boundary. Keep 
 
 ## Hard gates
 
+- The canonical shared server for this package is `https://hindsight.persephone.cc`. Before every Hindsight read or write, load the machine-local credentials from `~/.hindsight/codex.json` (or an explicitly supplied equivalent) and require its API URL to match that origin. Use it directly for every registered or new project: projects change banks, not servers. Do not probe, start, or use localhost, embedded Hindsight, cloud Hindsight, alternate profiles, or similarly named banks as fallbacks. If the canonical configuration is missing, mismatched, or unreachable, stop and report that exact blocker.
 - Resolve the active operator first. If it is absent, ask the user before preparing any mutation.
 - Resolve the registered project boundary and bank. Keep an unregistered or uncertain project isolated and route it through onboarding; never mix it into another project's bank.
 - Classify every candidate, run its project-policy preflight, and bind provenance before presenting a write. Then show operator, project, bank, action, affected count, and whether credential-bearing records are included; obtain confirmation for that exact summary without displaying their values.

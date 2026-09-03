@@ -37,6 +37,7 @@ _DOCUMENT_SUMMARY_FIELDS = {
     "document_metadata", "observation_scopes",
 }
 _SUCCESS_BODY_KEYS = {"content", "originaltext", "payload", "taskpayload", "rawbody", "body"}
+CANONICAL_HINDSIGHT_API_URL = "https://hindsight.persephone.cc"
 
 
 def _redact_credential_match(match: re.Match) -> str:
@@ -147,7 +148,7 @@ class TransportError(Exception):
 
 
 def load_hindsight_config(path: str) -> Dict[str, str]:
-    """Read an explicitly supplied config and retain only the credential in memory."""
+    """Read the team config and require its canonical Hindsight endpoint."""
     try:
         with open(path, "r", encoding="utf-8") as handle:
             data = json.load(handle)
@@ -159,7 +160,9 @@ def load_hindsight_config(path: str) -> Dict[str, str]:
     api_token = data.get("apiToken", data.get("hindsightApiToken"))
     if not isinstance(api_url, str) or not api_url or not isinstance(api_token, str) or not api_token:
         raise TransportError("Hindsight configuration requires API URL and token fields")
-    return {"api_url": api_url, "api_token": api_token}
+    if api_url.rstrip("/") != CANONICAL_HINDSIGHT_API_URL:
+        raise TransportError("Hindsight configuration does not target the canonical Hindsight endpoint")
+    return {"api_url": CANONICAL_HINDSIGHT_API_URL, "api_token": api_token}
 
 
 class HindsightTransport:

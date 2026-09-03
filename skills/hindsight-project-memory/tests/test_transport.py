@@ -12,7 +12,12 @@ from urllib.error import HTTPError, URLError
 SCRIPTS_ROOT = Path(__file__).resolve().parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS_ROOT))
 
-from project_memory.transport import HindsightTransport, TransportError, load_hindsight_config
+from project_memory.transport import (
+    CANONICAL_HINDSIGHT_API_URL,
+    HindsightTransport,
+    TransportError,
+    load_hindsight_config,
+)
 from project_memory.manifest import Manifest, build_manifest as _build_manifest, write_manifest
 
 GITHUB_TOKEN_CANARY = "ghp_" + "abcdefghijklmnopqrstuvwxyz1234567890"
@@ -51,6 +56,27 @@ class RecordingOpener:
 
 
 class TransportTests(unittest.TestCase):
+    def test_default_config_loader_accepts_only_the_team_canonical_endpoint(self):
+        self.assertEqual("https://hindsight.persephone.cc", CANONICAL_HINDSIGHT_API_URL)
+        with tempfile.TemporaryDirectory() as directory:
+            canonical = Path(directory) / "canonical.json"
+            canonical.write_text(json.dumps({
+                "hindsightApiUrl": "https://hindsight.persephone.cc/",
+                "hindsightApiToken": "secret-value",
+            }))
+            alternate = Path(directory) / "alternate.json"
+            alternate.write_text(json.dumps({
+                "hindsightApiUrl": "http://127.0.0.1:8888",
+                "hindsightApiToken": "secret-value",
+            }))
+
+            self.assertEqual(
+                CANONICAL_HINDSIGHT_API_URL,
+                load_hindsight_config(str(canonical))["api_url"],
+            )
+            with self.assertRaisesRegex(TransportError, "canonical Hindsight endpoint"):
+                load_hindsight_config(str(alternate))
+
     def test_async_retain_uses_idempotent_operation_id_and_encoded_bank(self):
         opener = RecordingOpener({"operation_id": "op-1", "status": "pending"})
         client = HindsightTransport("https://memory.example", "secret-value", opener=opener)
@@ -146,23 +172,23 @@ class TransportTests(unittest.TestCase):
         client = HindsightTransport("https://memory.example", "secret-value", opener=RecordingOpener({}))
         self.assertEqual({"api_url": "https://memory.example", "authenticated": True}, client.safe_config())
         with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "h.json"; path.write_text(json.dumps({"apiUrl": "https://memory.example", "apiToken": "secret-value"}))
+            path = Path(directory) / "h.json"; path.write_text(json.dumps({"apiUrl": CANONICAL_HINDSIGHT_API_URL, "apiToken": "secret-value"}))
             config = load_hindsight_config(str(path))
-            self.assertEqual("https://memory.example", config["api_url"])
+            self.assertEqual(CANONICAL_HINDSIGHT_API_URL, config["api_url"])
             self.assertNotIn("secret-value", json.dumps(client.safe_config()))
 
     def test_config_loader_accepts_codex_integration_field_names(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "codex.json"
             path.write_text(json.dumps({
-                "hindsightApiUrl": "https://memory.example",
+                "hindsightApiUrl": CANONICAL_HINDSIGHT_API_URL,
                 "hindsightApiToken": "secret-value",
                 "bankId": "owner::project",
             }))
 
             config = load_hindsight_config(str(path))
 
-            self.assertEqual("https://memory.example", config["api_url"])
+            self.assertEqual(CANONICAL_HINDSIGHT_API_URL, config["api_url"])
             self.assertEqual("secret-value", config["api_token"])
 
     def test_operations_paths_are_encoded_and_get_excludes_payload(self):
